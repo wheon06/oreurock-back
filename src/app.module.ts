@@ -15,6 +15,7 @@ import { PlaceBrandModule } from './place-brand/place-brand.module';
 import { PlaceGradeModule } from './place-grade/place-grade.module';
 import { PlaceBrand } from './place-brand/entities/place-brand.entity';
 import { PlaceGrade } from './place-grade/entities/place-grade.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PlaceGrade } from './place-grade/entities/place-grade.entity';
     GradeModule,
     PlaceBrandModule,
     PlaceGradeModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

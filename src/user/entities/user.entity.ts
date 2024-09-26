@@ -31,6 +31,9 @@ export class User extends Model<User> {
   @Column({ allowNull: true })
   firstDate: Date;
 
+  @Column({ allowNull: true })
+  refreshToken: string;
+
   @HasMany(() => Post)
   posts: Post[];
 

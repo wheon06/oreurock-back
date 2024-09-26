@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.entity';
 import { Repository } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
+import { SaveUserDto } from './dto/save-user-dto';
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,13 @@ export class UserService {
       ...dto,
       password: hashedPassword,
     });
+  }
+
+  async updateRefreshToken(username: string, refreshToken: string) {
+    return await this.userRepository.update(
+      { refreshToken },
+      { where: { username: username } },
+    );
   }
 
   async findByUsername(username: string) {

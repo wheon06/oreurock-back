@@ -1,4 +1,4 @@
-interface SaveUserDto {
+export interface SaveUserDto {
   username: string;
   password: string;
   phone: string;
