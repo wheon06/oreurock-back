@@ -28,6 +28,12 @@ export class UserService {
     );
   }
 
+  async findByRefreshToken(token: string) {
+    return await this.userRepository.findOne({
+      where: { refreshToken: token },
+    });
+  }
+
   async findByUsername(username: string) {
     return await this.userRepository.findOne({ where: { username: username } });
   }
