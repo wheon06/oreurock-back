@@ -1,0 +1,60 @@
+import {
+  AutoIncrement,
+  Column,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript';
+import { User } from '../../user/entities/user.entity';
+import { Place } from '../../place/entities/place.entity';
+import { BoulderGrade } from '../../boulder-grade/entities/boulder-grade.entity';
+import { LeadGrade } from '../../lead-grade/entities/lead-grade.entity';
+
+@Table({ tableName: 'Climb_TB', paranoid: true })
+export class Climb extends Model<Climb> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ allowNull: false, field: 'id' })
+  id: number;
+
+  @Column({ allowNull: false, field: 'climb_type' })
+  climbType: string;
+
+  @Column({ allowNull: false, field: 'is_completed' })
+  isCompleted: boolean;
+
+  @Column({ allowNull: true })
+  attempt: number;
+
+  @Column({ allowNull: false, field: 'video_url' })
+  videoUrl: string;
+
+  @Column({ allowNull: false, field: 'thumbnail_url' })
+  thumbnailUrl: string;
+
+  @ForeignKey(() => User)
+  @Column({ allowNull: false, field: 'user_id' })
+  userId: number;
+
+  @ForeignKey(() => Place)
+  @Column({ allowNull: false, field: 'place_id' })
+  placeId: number;
+
+  @ForeignKey(() => BoulderGrade)
+  @Column({ allowNull: true, field: 'boulder_grade_id' })
+  boulderGradeId: number;
+
+  @ForeignKey(() => LeadGrade)
+  @Column({ allowNull: true, field: 'lead_grade_id' })
+  leadGradeId: number;
+
+  @Column({ allowNull: false, field: 'created_at' })
+  createdAt: Date;
+
+  @Column({ allowNull: false, field: 'updated_at' })
+  updatedAt: Date;
+
+  @Column({ allowNull: false, field: 'deleted_at' })
+  deleteAt: Date;
+}
