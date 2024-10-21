@@ -10,6 +10,7 @@ import { User } from '../../user/entities/user.entity';
 import { Place } from '../../place/entities/place.entity';
 import { BoulderGrade } from '../../boulder-grade/entities/boulder-grade.entity';
 import { LeadGrade } from '../../lead-grade/entities/lead-grade.entity';
+import { BoardGrade } from '../../board-grade/entities/board-grade.entity';
 
 @Table({ tableName: 'Climb_TB', paranoid: true })
 export class Climb extends Model<Climb> {
@@ -49,12 +50,16 @@ export class Climb extends Model<Climb> {
   @Column({ allowNull: true, field: 'lead_grade_id' })
   leadGradeId: number;
 
+  @ForeignKey(() => BoardGrade)
+  @Column({ allowNull: true, field: 'board_grade_id' })
+  boardGradeId: number;
+
   @Column({ allowNull: false, field: 'created_at' })
   createdAt: Date;
 
   @Column({ allowNull: false, field: 'updated_at' })
   updatedAt: Date;
 
-  @Column({ allowNull: false, field: 'deleted_at' })
-  deleteAt: Date;
+  @Column({ allowNull: true, field: 'deleted_at' })
+  deletedAt: Date;
 }

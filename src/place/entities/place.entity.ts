@@ -10,7 +10,6 @@ import {
 import { PlaceBrand } from '../../place-brand/entities/place-brand.entity';
 import { Climb } from '../../climb/entities/climb.entity';
 import { BoulderGrade } from '../../boulder-grade/entities/boulder-grade.entity';
-import { LeadGrade } from '../../lead-grade/entities/lead-grade.entity';
 
 @Table({ tableName: 'Place_TB' })
 export class Place extends Model<Place> {
@@ -34,9 +33,6 @@ export class Place extends Model<Place> {
 
   @HasMany(() => BoulderGrade)
   boulderGrades: BoulderGrade[];
-
-  @HasMany(() => LeadGrade)
-  leadGrades: LeadGrade[];
 
   @Column({ allowNull: false, field: 'created_at' })
   createdAt: Date;

@@ -5,6 +5,7 @@ import { Repository, Sequelize } from 'sequelize-typescript';
 import { SaveUserDto } from './dto/save-user-dto';
 import { UserDetail } from '../user-detail/entities/user-detail.entity';
 import formatStringToDate from '../../utils/format-string-to-date';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,11 @@ export class UserService {
     try {
       const findUser = await this.findByUsername(dto.username);
       if (findUser) throw new ConflictException('User already exists');
-      const user = await this.userRepository.create(dto, { transaction });
+      const hashedPassword = await bcrypt.hash(dto.password, 10);
+      const user = await this.userRepository.create(
+        { ...dto, password: hashedPassword },
+        { transaction },
+      );
       const birthdayFormatted = formatStringToDate(dto.birthday);
       const firstDateClimbingFormatted = formatStringToDate(
         dto.firstDateClimbing,

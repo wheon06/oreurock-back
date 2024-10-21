@@ -18,6 +18,8 @@ import { BoulderGrade } from './boulder-grade/entities/boulder-grade.entity';
 import { LeadGrade } from './lead-grade/entities/lead-grade.entity';
 import { ClimbModule } from './climb/climb.module';
 import { Climb } from './climb/entities/climb.entity';
+import { BoardGradeModule } from './board-grade/board-grade.module';
+import { BoardGrade } from './board-grade/entities/board-grade.entity';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { Climb } from './climb/entities/climb.entity';
         BoulderGrade,
         LeadGrade,
         Climb,
+        BoardGrade,
       ],
       autoLoadModels: true,
       synchronize: true,
@@ -52,6 +55,7 @@ import { Climb } from './climb/entities/climb.entity';
     BoulderGradeModule,
     LeadGradeModule,
     ClimbModule,
+    BoardGradeModule,
   ],
   controllers: [],
   providers: [],

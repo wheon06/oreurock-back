@@ -8,15 +8,15 @@ import {
 } from 'sequelize-typescript';
 import { Climb } from '../../climb/entities/climb.entity';
 
-@Table({ tableName: 'Lead_Grade_TB' })
-export class LeadGrade extends Model<LeadGrade> {
+@Table({ tableName: 'Board_Grade_TB' })
+export class BoardGrade extends Model<BoardGrade> {
   @PrimaryKey
   @AutoIncrement
   @Column({ allowNull: false })
   id: number;
 
-  @Column({ allowNull: false, field: 'yosemite_grade' })
-  yosemiteGrade: string;
+  @Column({ allowNull: false, field: 'v_grade' })
+  vGrade: string;
 
   @HasMany(() => Climb)
   climbs: Climb[];
