@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { PlaceService } from './place.service';
 import { SavePlaceDto } from './dto/save-place.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('place')
 export class PlaceController {
@@ -11,6 +12,7 @@ export class PlaceController {
     return await this.placeService.saveAll(dtos);
   }
 
+  @UseGuards(AuthGuard())
   @Get()
   async findAll() {
     return await this.placeService.findAll();

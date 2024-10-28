@@ -7,17 +7,24 @@ import * as ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { PostService } from '../post/post.service';
 
 @Injectable()
 export class ClimbService {
   constructor(
     @InjectModel(Climb) private readonly climbRepository: Repository<Climb>,
+    private readonly postService: PostService,
     private readonly sequelize: Sequelize,
   ) {}
+
+  async findAllById(userId: number) {
+    return await this.climbRepository.findAll({ where: { userId: userId } });
+  }
 
   async createPostsWithTransaction(
     fileList: Express.Multer.File[],
     dataList: any[],
+    userId: number,
   ) {
     AWS.config.update({
       region: 'ap-northeast-2',
@@ -60,7 +67,7 @@ export class ClimbService {
             videoUrl: uploadResults[index].url,
             thumbnailUrl: uploadResults[index].thumbnailUrl,
             placeId: data.placeId,
-            userId: 2,
+            userId: userId,
             boulderGradeId:
               data.boulderGradeId !== -1 ? data.boulderGradeId : null,
             leadGradeId: data.leadGradeId !== -1 ? data.leadGradeId : null,
@@ -112,7 +119,7 @@ export class ClimbService {
           count: 1,
           folder: thumbnailDir,
           filename: `${key}-thumbnail.png`,
-          size: '200x?',
+          size: '300x?',
         });
     });
   }
