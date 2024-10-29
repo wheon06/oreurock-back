@@ -8,12 +8,18 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { PostService } from '../post/post.service';
+import { BoulderGradeService } from '../boulder-grade/boulder-grade.service';
+import { PlaceService } from '../place/place.service';
+import formatZoneDateTimeToString from '../../utils/format-zone-date-time-to-string';
+import formatZonedDateTime from '../../utils/format-zone-date-time-to-string';
 
 @Injectable()
 export class ClimbService {
   constructor(
     @InjectModel(Climb) private readonly climbRepository: Repository<Climb>,
     private readonly postService: PostService,
+    private readonly placeService: PlaceService,
+    private readonly boulderGradeService: BoulderGradeService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -66,6 +72,7 @@ export class ClimbService {
             attempt: data.attempt,
             videoUrl: uploadResults[index].url,
             thumbnailUrl: uploadResults[index].thumbnailUrl,
+            date: new Date(formatZonedDateTime(data.date)),
             placeId: data.placeId,
             userId: userId,
             boulderGradeId:
@@ -77,7 +84,38 @@ export class ClimbService {
         );
       });
 
-      await Promise.all(savePromises);
+      const climbs = await Promise.all(savePromises);
+
+      const bestClimb = climbs.reduce((prev, current) => {
+        return prev.boulderGradeId > current.boulderGradeId ? prev : current;
+      });
+
+      const isCompleted = climbs.some((climb) => climb.isCompleted);
+      const place = await this.placeService.findById(bestClimb.placeId);
+      const boulderGradeList =
+        await this.boulderGradeService.findAllByEqualColor(
+          bestClimb.boulderGradeId,
+        );
+      const vGrade =
+        boulderGradeList[0].vGrade ===
+        boulderGradeList[boulderGradeList.length - 1].vGrade
+          ? boulderGradeList[0].vGrade
+          : boulderGradeList[0].vGrade +
+            '~' +
+            boulderGradeList[boulderGradeList.length - 1].vGrade;
+
+      await this.postService.createPostWithClimbs(
+        {
+          isCompleted: isCompleted,
+          thumbnailUrl: bestClimb.thumbnailUrl,
+          placeName: place.name,
+          colorGrade: boulderGradeList[0].colorGrade,
+          vGrade: vGrade,
+          userId: userId,
+        },
+        climbs,
+        { transaction },
+      );
 
       await transaction.commit();
       return HttpStatus.CREATED;
@@ -86,6 +124,13 @@ export class ClimbService {
       console.log(error);
       return HttpStatus.CONFLICT;
     }
+  }
+
+  async deleteById(id: number) {
+    return await this.climbRepository.destroy({
+      where: { id: id },
+      individualHooks: true,
+    });
   }
 
   async createThumbnail(file: Express.Multer.File): Promise<string> {

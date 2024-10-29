@@ -17,4 +17,12 @@ export class PlaceService {
   async findAll() {
     return await this.placeRepository.findAll();
   }
+
+  async findAllByBulkId(idList: number[]) {
+    return await this.placeRepository.findAll({ where: { id: idList } });
+  }
+
+  async findById(id: number) {
+    return await this.placeRepository.findByPk(id);
+  }
 }

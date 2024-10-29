@@ -22,6 +22,8 @@ import { BoardGradeModule } from './board-grade/board-grade.module';
 import { BoardGrade } from './board-grade/entities/board-grade.entity';
 import { PostModule } from './post/post.module';
 import { Post } from './post/entities/post.entity';
+import { PostClimbModule } from './post-climb/post-climb.module';
+import { PostClimb } from './post-climb/entities/post-climb.entity';
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { Post } from './post/entities/post.entity';
         Climb,
         BoardGrade,
         Post,
+        PostClimb,
       ],
       autoLoadModels: true,
       synchronize: true,
@@ -60,6 +63,7 @@ import { Post } from './post/entities/post.entity';
     ClimbModule,
     BoardGradeModule,
     PostModule,
+    PostClimbModule,
   ],
   controllers: [],
   providers: [],

@@ -14,6 +14,6 @@ export class BoulderGradeController {
   @Get(':placeId')
   async findAll(@Param('placeId') placeId: number) {
     if (!placeId) return HttpStatus.NOT_FOUND;
-    return await this.boulderGradeService.findAll(placeId);
+    return await this.boulderGradeService.findAllByPlaceId(placeId);
   }
 }

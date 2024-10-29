@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class PlaceController {
   constructor(private readonly placeService: PlaceService) {}
 
+  @UseGuards(AuthGuard())
   @Post()
   async saveAll(@Body() dtos: SavePlaceDto[]) {
     return await this.placeService.saveAll(dtos);
@@ -16,5 +17,11 @@ export class PlaceController {
   @Get()
   async findAll() {
     return await this.placeService.findAll();
+  }
+
+  @UseGuards(AuthGuard())
+  @Post('all')
+  async findAllByBulkId(@Body() idList: number[]) {
+    return await this.placeService.findAllByBulkId(idList);
   }
 }

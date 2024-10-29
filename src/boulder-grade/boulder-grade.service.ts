@@ -15,9 +15,38 @@ export class BoulderGradeService {
     return await this.boulderGradeRepository.bulkCreate(dtos);
   }
 
-  async findAll(placeId: number) {
+  async findAll() {
+    return await this.boulderGradeRepository.findAll();
+  }
+
+  async findAllByPlaceId(placeId: number) {
     return await this.boulderGradeRepository.findAll({
       where: { placeId: placeId },
+    });
+  }
+
+  async findOneByPlaceIdDesc(placeId: number) {
+    return await this.boulderGradeRepository.findOne({
+      where: { placeId: placeId },
+      order: [['id', 'DESC']],
+    });
+  }
+
+  async findById(id: number) {
+    return await this.boulderGradeRepository.findByPk(id);
+  }
+
+  async findAllByEqualColor(id: number) {
+    const boulderGrade = await this.boulderGradeRepository.findByPk(id);
+    if (!boulderGrade) {
+      throw new Error(`BoulderGrade with id ${id} not found`);
+    }
+
+    return await this.boulderGradeRepository.findAll({
+      where: {
+        placeId: boulderGrade.placeId,
+        colorGrade: boulderGrade.colorGrade,
+      },
     });
   }
 }

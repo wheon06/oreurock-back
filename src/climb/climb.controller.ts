@@ -22,12 +22,13 @@ export class ClimbController {
   @UseGuards(AuthGuard())
   @Post(':id')
   @UseInterceptors(FilesInterceptor('file'))
-  async uploadFiles(
+  async uploadPostWithClimbs(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: any,
     @Param('id') id: number,
   ) {
     const inputDataList = parseJsonArray(body.inputData);
+    console.log(inputDataList);
     await this.climbService.createPostsWithTransaction(
       files,
       inputDataList,
