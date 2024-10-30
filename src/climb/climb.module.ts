@@ -7,6 +7,8 @@ import { PassportModule } from '@nestjs/passport';
 import { PostModule } from '../post/post.module';
 import { BoulderGradeModule } from '../boulder-grade/boulder-grade.module';
 import { PlaceModule } from '../place/place.module';
+import { LeadGradeModule } from '../lead-grade/lead-grade.module';
+import { BoardGradeModule } from '../board-grade/board-grade.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { PlaceModule } from '../place/place.module';
     forwardRef(() => PostModule),
     PlaceModule,
     BoulderGradeModule,
+    LeadGradeModule,
+    BoardGradeModule,
   ],
   controllers: [ClimbController],
   providers: [ClimbService],

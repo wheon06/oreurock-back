@@ -13,4 +13,8 @@ export class BoardGradeService {
   async findAll() {
     return await this.boardGradeRepository.findAll();
   }
+
+  async findById(id: number) {
+    return await this.boardGradeRepository.findByPk(id);
+  }
 }

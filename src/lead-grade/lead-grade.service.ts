@@ -17,4 +17,8 @@ export class LeadGradeService {
   async findAll() {
     return await this.leadGradeRepository.findAll();
   }
+
+  async findById(id: number) {
+    return await this.leadGradeRepository.findByPk(id);
+  }
 }

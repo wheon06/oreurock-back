@@ -8,5 +8,6 @@ import { BoardGrade } from './entities/board-grade.entity';
   imports: [SequelizeModule.forFeature([BoardGrade])],
   controllers: [BoardGradeController],
   providers: [BoardGradeService],
+  exports: [BoardGradeService],
 })
 export class BoardGradeModule {}

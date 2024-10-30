@@ -10,8 +10,10 @@ import * as os from 'os';
 import { PostService } from '../post/post.service';
 import { BoulderGradeService } from '../boulder-grade/boulder-grade.service';
 import { PlaceService } from '../place/place.service';
-import formatZoneDateTimeToString from '../../utils/format-zone-date-time-to-string';
 import formatZonedDateTime from '../../utils/format-zone-date-time-to-string';
+import { LeadGradeService } from '../lead-grade/lead-grade.service';
+import { BoulderGrade } from '../boulder-grade/entities/boulder-grade.entity';
+import { BoardGradeService } from '../board-grade/board-grade.service';
 
 @Injectable()
 export class ClimbService {
@@ -20,6 +22,8 @@ export class ClimbService {
     private readonly postService: PostService,
     private readonly placeService: PlaceService,
     private readonly boulderGradeService: BoulderGradeService,
+    private readonly leadGradeService: LeadGradeService,
+    private readonly boardGradeService: BoardGradeService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -86,31 +90,38 @@ export class ClimbService {
 
       const climbs = await Promise.all(savePromises);
 
+      const isCompleted = climbs.some((climb) => climb.isCompleted);
+
       const bestClimb = climbs.reduce((prev, current) => {
-        return prev.boulderGradeId > current.boulderGradeId ? prev : current;
+        if (climbs[0].climbType === '볼더링')
+          return prev.boulderGradeId > current.boulderGradeId ? prev : current;
+        else if (climbs[0].climbType === '리드')
+          return prev.leadGradeId > current.leadGradeId ? prev : current;
+        else return prev.boardGradeId > current.boardGradeId ? prev : current;
       });
 
-      const isCompleted = climbs.some((climb) => climb.isCompleted);
       const place = await this.placeService.findById(bestClimb.placeId);
+
       const boulderGradeList =
         await this.boulderGradeService.findAllByEqualColor(
           bestClimb.boulderGradeId,
         );
-      const vGrade =
-        boulderGradeList[0].vGrade ===
-        boulderGradeList[boulderGradeList.length - 1].vGrade
-          ? boulderGradeList[0].vGrade
-          : boulderGradeList[0].vGrade +
-            '~' +
-            boulderGradeList[boulderGradeList.length - 1].vGrade;
+
+      const grade = await this.getBestGrade(
+        climbs,
+        bestClimb,
+        boulderGradeList,
+      );
 
       await this.postService.createPostWithClimbs(
         {
           isCompleted: isCompleted,
           thumbnailUrl: bestClimb.thumbnailUrl,
           placeName: place.name,
-          colorGrade: boulderGradeList[0].colorGrade,
-          vGrade: vGrade,
+          colorGrade: boulderGradeList
+            ? boulderGradeList[0].colorGrade
+            : 'Gray',
+          vGrade: grade,
           userId: userId,
         },
         climbs,
@@ -125,6 +136,31 @@ export class ClimbService {
       return HttpStatus.CONFLICT;
     }
   }
+
+  getBestGrade = async (
+    climbs: Climb[],
+    bestClimb: Climb,
+    boulderGradeList: BoulderGrade[],
+  ) => {
+    if (climbs[0].climbType === '볼더링') {
+      return boulderGradeList[0].vGrade ===
+        boulderGradeList[boulderGradeList.length - 1].vGrade
+        ? boulderGradeList[0].vGrade
+        : boulderGradeList[0].vGrade +
+            '~' +
+            boulderGradeList[boulderGradeList.length - 1].vGrade;
+    } else if (climbs[0].climbType === '리드') {
+      const leadGrade = await this.leadGradeService.findById(
+        bestClimb.leadGradeId,
+      );
+      return leadGrade.yosemiteGrade;
+    } else {
+      const boardGrade = await this.boardGradeService.findById(
+        bestClimb.boardGradeId,
+      );
+      return boardGrade.vGrade;
+    }
+  };
 
   async deleteById(id: number) {
     return await this.climbRepository.destroy({

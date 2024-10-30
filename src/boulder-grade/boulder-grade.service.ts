@@ -38,9 +38,7 @@ export class BoulderGradeService {
 
   async findAllByEqualColor(id: number) {
     const boulderGrade = await this.boulderGradeRepository.findByPk(id);
-    if (!boulderGrade) {
-      throw new Error(`BoulderGrade with id ${id} not found`);
-    }
+    if (!boulderGrade) return;
 
     return await this.boulderGradeRepository.findAll({
       where: {
