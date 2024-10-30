@@ -1,6 +1,6 @@
 import {
   AutoIncrement,
-  BelongsTo,
+  BelongsToMany,
   Column,
   ForeignKey,
   HasMany,
@@ -8,40 +8,46 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
+import { Climb } from '../../climb/entities/climb.entity';
 import { User } from '../../user/entities/user.entity';
+import { PostClimb } from '../../post-climb/entities/post-climb.entity';
 import { Place } from '../../place/entities/place.entity';
-import { Record } from '../../record/entities/record.entity';
 
-@Table
+@Table({ tableName: 'Post_TB', paranoid: true })
 export class Post extends Model<Post> {
   @PrimaryKey
   @AutoIncrement
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, field: 'id' })
   id: number;
 
-  @Column({ allowNull: false })
-  description: string;
+  @Column({ allowNull: false, field: 'is_completed' })
+  isCompleted: boolean;
 
-  @Column({ allowNull: false })
-  startTime: Date;
+  @Column({ allowNull: false, field: 'thumbnail_url' })
+  thumbnailUrl: string;
 
-  @Column({ allowNull: false })
-  endTime: Date;
+  @Column({ allowNull: false, field: 'place_name' })
+  placeName: string;
 
-  @HasMany(() => Record)
-  records: Record[];
+  @Column({ allowNull: false, field: 'color_grade' })
+  colorGrade: string;
+
+  @Column({ allowNull: false, field: 'v_grade' })
+  vGrade: string;
 
   @ForeignKey(() => User)
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, field: 'user_id' })
   userId: number;
 
-  @BelongsTo(() => User)
-  user: User;
+  @BelongsToMany(() => Climb, () => PostClimb)
+  climbs: Climb[];
 
-  @ForeignKey(() => Place)
-  @Column({ allowNull: false })
-  placeId: number;
+  @Column({ allowNull: false, field: 'created_at' })
+  createdAt: Date;
 
-  @BelongsTo(() => Place)
-  place: User;
+  @Column({ allowNull: false, field: 'updated_at' })
+  updatedAt: Date;
+
+  @Column({ allowNull: true, field: 'deleted_at' })
+  deletedAt: Date;
 }

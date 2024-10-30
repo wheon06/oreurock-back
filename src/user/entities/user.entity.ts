@@ -2,14 +2,16 @@ import {
   AutoIncrement,
   Column,
   HasMany,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { Post } from '../../post/entities/post.entity';
-import { Record } from '../../record/entities/record.entity';
+import { UserDetail } from '../../user-detail/entities/user-detail.entity';
+import { Membership } from '../../membership/entities/membership.entity';
+import { Climb } from '../../climb/entities/climb.entity';
 
-@Table({ paranoid: true })
+@Table({ tableName: 'User_TB', paranoid: true })
 export class User extends Model<User> {
   @PrimaryKey
   @AutoIncrement
@@ -22,21 +24,24 @@ export class User extends Model<User> {
   @Column({ allowNull: false })
   password: string;
 
-  @Column({ allowNull: false })
-  phone: string;
-
-  @Column({ allowNull: false })
-  birthday: Date;
-
-  @Column({ allowNull: true })
-  firstDate: Date;
-
-  @Column({ allowNull: true })
+  @Column({ allowNull: true, field: 'refresh_token' })
   refreshToken: string;
 
-  @HasMany(() => Post)
-  posts: Post[];
+  @HasOne(() => UserDetail)
+  userDetail: UserDetail;
 
-  @HasMany(() => Record)
-  records: Record[];
+  @HasMany(() => Membership)
+  memberships: Membership[];
+
+  @HasMany(() => Climb)
+  climbs: Climb[];
+
+  @Column({ allowNull: false, field: 'created_at' })
+  createdAt: Date;
+
+  @Column({ allowNull: false, field: 'updated_at' })
+  updatedAt: Date;
+
+  @Column({ allowNull: true, field: 'deleted_at' })
+  deletedAt: Date;
 }
